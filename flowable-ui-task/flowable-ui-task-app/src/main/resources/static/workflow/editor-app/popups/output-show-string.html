@@ -1,0 +1,18 @@
+<div class="modal" tabindex="-1" role="dialog" ng-controller="OutputStringCtrl">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>输出结果</h2>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <!--                    <div class="alert alert-success" role="alert" ng-show="stringResult.result.length == 0 && !status.loading">没有结果输出</div>-->
+                    <div ng-if="resultGridString && !status.loading" class="validationGrid" ui-grid="resultGridString" ui-grid-selection></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-disabled="status.loading" class="btn btn-primary" ng-click="$hide()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

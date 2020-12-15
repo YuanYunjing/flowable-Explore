@@ -1,0 +1,39 @@
+<!--子节点为名称时-->
+<div class="field" ng-if="child.name">
+    <span ng-click="child.expanded = !child.expanded">
+        <!-- expanded -->
+        <i class="glyphicon"
+           ng-class="{'glyphicon-chevron-right': !child.expanded, 'glyphicon-chevron-down': child.expanded}"></i>
+        {{child.name | translate}}
+    </span>
+    <!-- 子领域树 -->
+    <div class="child-field" ng-class="{'field-hidden': !child.expanded, 'field': child.expanded}">
+
+        <div ng-repeat="child in child.children" ng-include="'editor-app/partials/service-solutions-tree-list.html'"></div>
+
+    </div>
+</div>
+
+<!--子节点为版本时-->
+<!-- 使用jQueryUI可拖放组件的包装，在AngularJS中实现jQueryUI拖放功能 -->
+<div class="stencil-item" ng-if="child.version"
+     id="{{child.version}}"
+     title="{{child.version | translate}}"
+     ng-model="draggedElement">
+    {{child.version | translate}}.0
+</div>
+
+<!--
+<div class="stencil-item" ng-if="child.userTask"
+     id="{{child.userTask}}"
+     title="{{child.userTask.description | translate}}"
+     ng-model="draggedElement"
+     data-drag="true"
+     jqyoui-draggable="{onStart:'startDragCallback', onDrag:'dragCallback'}"
+     data-jqyoui-options="{revert: 'invalid', helper: 'clone', opacity : 0.5}">
+    <img ng-if="!child.userTask.customIcon" ng-src="editor-app/stencilsets/{{getStencilSetName()}}/icons/{{child.userTask.icon}}" width="16px;"
+         height="16px;"/>
+    <img ng-if="child.userTask.customIcon" ng-src="{{getImageUrl(child.userTask.icon)}}" width="16px;" height="16px;"/>
+    {{child.userTask.name | translate}}
+</div>
+-->

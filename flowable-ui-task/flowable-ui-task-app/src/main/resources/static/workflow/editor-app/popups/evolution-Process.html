@@ -1,0 +1,35 @@
+<div class="modal" ng-controller="EvolutionProcessInstanceCtrl">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{'EDIT.PROCESS.EVOLUTION.TITLE' | translate}}</h2>
+            </div>
+            <div class="modal-body">
+                <div ng-if="saveDialog.errorMessage && saveDialog.errorMessage.length > 0" class="alert error" style="font-size: 14px; margin-top:20px">
+                    <div class="popup-error" style="font-size: 14px">
+                        <span class="glyphicon glyphicon-remove-circle"></span>
+                        <span>{{saveDialog.errorMessage}}</span>
+                    </div>
+                </div>
+                <div>
+                    <p>{{'EDIT.POPUP.EVOLUTION-DESCRIPTION' | translate:saveDialog}}</p>
+                </div>
+            </div>
+<!--             底部按钮-->
+            <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn" ng-click="close()" ng-disabled="status.loading" translate>ACTION.CANCEL</button>
+<!--                 <button class="btn btn-primary" ng-click="evolutionAndClose()" ng-disabled="status.loading || saveDialog.name.length == 0 || saveDialog.key.length == 0" ng-show="!error && !error.isConflict" translate>ACTION.SAVE-AND-CLOSE</button>-->
+                    <button class="btn btn-primary" ng-click="evolution()" ng-disabled="status.loading || saveDialog.name.length == 0 || saveDialog.key.length == 0" ng-show="!error && !error.isConflict" translate>EDIT.ACTION.EVOLUTION</button>
+                    <button class="btn btn-primary" ng-click="okClicked()" ng-disabled="isOkButtonDisabled()" ng-show="error && error.isConflict" translate>ACTION.OK</button>
+                </div>
+
+                <div class="pull-right popup-error" ng-if="error && !error.isConflict">
+                    <span>{{'EDIT.PRPCESSINSTANCE.EVOLUTION.ERROR' | translate}}</span>
+                </div>
+
+                <loading></loading>
+
+            </div>
+        </div>
+    </div>

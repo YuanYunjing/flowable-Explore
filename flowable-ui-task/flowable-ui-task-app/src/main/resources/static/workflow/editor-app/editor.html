@@ -1,0 +1,222 @@
+<div ng-controller="StencilController" ng-cloak="">
+    <div class="subheader editor-toolbar" id="editor-header">
+        <!--      上边工具栏-->
+        <div class="btn-group">
+            <div class="btn-toolbar pull-left" ng-controller="ToolbarController" ng-cloak>
+                <button id="{{item.id}}"
+                        title="{{item.title | translate}}"
+                        ng-repeat="item in items"
+                        ng-switch on="item.type"
+                        class="btn btn-inverse" ng-class="{'separator': item.type == 'separator'}"
+                        ng-disabled="item.type == 'separator' || item.enabled == false"
+                        ng-click="toolbarButtonClicked($index)">
+                    <i ng-switch-when="button" ng-class="item.cssClass" class="toolbar-button" data-toggle="tooltip" title="{{item.title | translate}}"></i>
+                    <div ng-switch-when="separator" ng-class="item.cssClass"></div>
+                </button>
+<!--                <button class="btn btn-inverse"-->
+<!--                        ng-click="EditProcessInstancerun()">-->
+<!--                    <i class="icon icon-run"></i>-->
+<!--                </button>-->
+            </div>
+        </div>
+        <!--      未知-->
+        <div class="btn-group pull-right" ng-show="!secondaryItems.length">
+            <div class="btn-toolbar pull-right" ng-controller="ToolbarController">
+                <button title="{{item.title | translate}}" ng-repeat="item in secondaryItems" ng-switch on="item.type" class="btn btn-inverse" ng-class="{'separator': item.type == 'separator'}"
+                        ng-disabled="item.type == 'separator'" ng-click="toolbarSecondaryButtonClicked($index)" id="{{item.id}}">
+                    <i ng-switch-when="button" ng-class="item.cssClass" class="toolbar-button" data-toggle="tooltip" title="{{item.title | translate}}"></i>
+                    <div ng-switch-when="separator" ng-class="item.cssClass"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="full">
+        <div class="row row-no-gutter">
+            <div id="paletteHelpWrapper" class="col-3">
+                <!--              左侧的工具栏-->
+                <div class="stencils" id="paletteSection">
+                    <div ng-if="stencilItemGroups.length > 1">
+                        <div ng-repeat="group in stencilItemGroups">
+
+                            <ul ng-if="group.visible && group.items" class="stencil-group"  ng-class="{collapsed: !group.expanded, 'first': $first}">
+                                <li ng-include="'editor-app/partials/stencil-item-template.html?version=6'"></li>
+                            </ul>
+
+                            <div ng-if="!group.items" ng-include="'editor-app/partials/root-stencil-item-template.html?version=6'"></div>
+
+                        </div>
+                    </div>
+                    <div ng-if="stencilItemGroups.length == 1">
+                        <ul class="stencil-group">
+                            <li ng-repeat="item in stencilItemGroups[0].paletteItems" class="stencil-item"
+                                id="{{item.id}}"
+                                title="{{item.description | translate}}"
+                                ng-model="draggedElement"
+                                data-drag="true"
+                                jqyoui-draggable="{onStart:'startDragCallback', onDrag:'dragCallback'}"
+                                data-jqyoui-options="{revert: 'invalid', helper: 'clone', opacity : 0.5}">
+                                <img ng-if="!item.customIcon" ng-src="editor-app/stencilsets/{{getStencilSetName()}}/icons/{{item.icon}}" width="16px;" height="16px;"/>
+                                <img ng-if="item.customIcon" ng-src="{{getImageUrl(item.icon)}}" width="16px;" height="16px;"/>
+                                {{item.name | translate}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!--              下边导航区-->
+                <div id="service-contents-wrapper">
+                    <div class="service-contents-header">
+                        个性化服务空间
+                    </div>
+                    <div class="service-contents-body" ng-if="stencilItemGroups"  ng-controller="ServiceContentsController">
+                        <div ng-if="serviceContentsTree.length >= 1">
+                            <div class="service-field" ng-repeat="child in serviceContentsTree"  ng-include="'editor-app/partials/services-tree-list.html'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="service-solution-contents-wrapper">
+                    <div class="service-solution-contents-header">
+                        个性化服务方案空间
+                    </div>
+                    <div class="service-solution-contents-body" ng-if="stencilItemGroups"  ng-controller="ServiceSolutionContentsController">
+                        <div ng-if="serviceSolutions.length >= 1">
+                            <div class="service-solution-field" ng-repeat="child in serviceSolutions"  ng-include="'editor-app/partials/service-solutions-tree-list.html'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="paletteSectionFooter">
+                    <i class="glyphicon glyphicon-chevron-left"></i>
+                </div>
+            </div>
+            <!--          左侧画图区-->
+            <div class="col-5" id="contentCanvasWrapper">
+                <div id="paletteSectionOpen" class="hidden">
+                    <i class="glyphicon glyphicon-chevron-right"></i>
+                </div>
+                <!--              编辑器中流程图部分-->
+                <div id="canvasHelpWrapper" class="col-xs-12">
+                    <div class="canvas-wrapper" id="canvasSection"
+                         ng-model="droppedElement"
+                         data-drop="true"
+                         data-jqyoui-options
+                         jqyoui-droppable="{onDrop:'dropCallback',onOver: 'overCallback', onOut: 'outCallback'}">
+                        <div class="canvas-message" id="model-modified-date"></div>
+                        <div class="Oryx_button"
+                             id="delete-button"
+                             title="{{'BUTTON.ACTION.DELETE.TOOLTIP' | translate}}"
+                             ng-click="deleteShape()"
+                             style="display:none">
+                            <img src="editor-app/images/delete.png"/>
+                        </div>
+                        <div class="Oryx_button"
+                             id="morph-button"
+                             title="{{'BUTTON.ACTION.MORPH.TOOLTIP' | translate}}"
+                             ng-click="morphShape()"
+                             style="display:none">
+                            <img src="editor-app/images/wrench.png"/>
+                        </div>
+                        <div class="Oryx_button" id="edit-button" style="display:none" ng-click="editShape()">
+                            <img src="editor-app/images/pencil.png"/>
+                        </div>
+                        <div class="Oryx_button"
+                             ng-repeat="item in quickMenuItems"
+                             id="{{item.id}}"
+                             title="{{item.description | translate}}"
+                             ng-click="quickAddItem(item.id)"
+                             ng-model="draggedElement"
+                             data-drag="true"
+                             jqyoui-draggable="{onStart:'startDragCallbackQuickMenu', onDrag:'dragCallbackQuickMenu'}"
+                             data-jqyoui-options="{revert: 'invalid', helper: 'clone', opacity : 0.5}"
+                             style="display:none">
+                            <img ng-src="editor-app/stencilsets/{{getStencilSetName()}}/icons/{{item.icon}}"/>
+                        </div>
+                        <div class="Oryx_button"
+                             id="delete-button1"
+                             title="{{'BUTTON.ACTION.RECOMMEND.TOOLTIP ' | translate}}"
+                             ng-click="recommend()"
+                             style="display:none">
+                            <img src="editor-app/images/yunxing.bmp"/>
+                        </div>
+                    </div>
+                    <div type="hiddden" value=${historyActivityIds} id="historyActivityIds"></div>
+
+                </div>
+
+<!--                              下边的信息-->
+                <div id="propertiesHelpWrapper" class="col-xs-12">
+                    <div class="recommendSection" id="recommendSection"  ng-class="{collapsed: propertyWindowState.collapsed}">
+                        <div class="recommend-title">
+                            <a ng-click="propertyWindowState.toggle()">
+                                <i class="glyphicon"
+                                   ng-class="{'glyphicon-chevron-down': propertyWindowState.collapsed, 'glyphicon-chevron-right': !propertyWindowState.collapsed}"></i>
+                                <span>服务推荐</span>
+                             </a>
+
+                        </div>
+<!--                        <div ng-include="'/flowable-task/workflow/' + 'views/processes-rmd.html'"></div>-->
+                        <div ng-include="'/flowable-task/workflow/' + 'views/services-rmd.html'"></div>
+                    </div>
+                </div>
+            </div>
+<!--            移到的信息展示-->
+            <div class="col-4 propertySection" id="propertySection">
+                <div class="selected-item-section">
+                    <div class="clearfix">
+                        <div class="pull-right" ng-if="selectedItem.auditData.createDate">
+                            <strong>{{'ELEMENT.DATE_CREATED' | translate}}: </strong>
+                            {{selectedItem.auditData.createDate}}
+                        </div>
+                        <div class="pull-right" ng-if="selectedItem.auditData.author">
+                            <strong>{{'ELEMENT.AUTHOR' | translate}}: </strong>
+                            {{selectedItem.auditData.author}}
+                        </div>
+<!--                        标题头-->
+
+                        <div class="selected-item-title">
+<!--                            <a ng-click="propertyWindowState.toggle()">-->
+                            <a>
+<!--                                <i class="glyphicon"-->
+<!--                                   ng-class="{'glyphicon-chevron-right': propertyWindowState.collapsed, 'glyphicon-chevron-down': !propertyWindowState.collapsed}"></i>-->
+                                <span ng-show="selectedItem.title != undefined && selectedItem.title != null && selectedItem.title.length > 0">{{selectedItem.title}}</span>
+                                <span ng-show="!selectedItem || selectedItem.title == undefined || selectedItem.title == null || selectedItem.title.length == 0">{{modelData.name}}</span>
+                            </a>
+                        </div>
+                        <div class="selected-item-body" id="selected-item-body">
+                            <div>
+
+                                <div class="col-1" >
+                                    <button class="btn" translate="BUTTON.ACTION.INPUTPARAMS" ng-click="createInputParamsForm()"></button>
+                                    <button class="btn" translate="BUTTON.ACTION.OUTPUT_VAR" ng-click="OutputShow()"> </button>
+                                </div>
+
+
+                                <div class="property-row" ng-repeat="property in selectedItem.properties"
+                                     ng-click="propertyClicked($index)" ng-class="{'clear' : $index%2 == 0}">
+                                    <span class="title" ng-if="!property.hidden" title="{{ property.description | translate}}">{{ property.title | translate }}&nbsp;:</span>
+                                    <span class="title-removed" ng-if="property.hidden"><i>{{ property.title }}&nbsp;({{'PROPERTY.REMOVED' | translate}})&nbsp;:</i></span>
+                                    <span class="value">
+	                                    <ng-include
+                                                src="getPropertyTemplateUrl($index)"
+                                                ng-if="!property.hasReadWriteMode"></ng-include>
+	                                    <ng-include src="getPropertyReadModeTemplateUrl($index)"
+                                                    ng-if="property.hasReadWriteMode && property.mode == 'read'"></ng-include>
+	                                    <ng-include src="getPropertyWriteModeTemplateUrl($index)"
+                                                    ng-if="property.hasReadWriteMode && property.mode == 'write'"></ng-include>
+	                            </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="scripts/controllers/services-rmd.js"></script>

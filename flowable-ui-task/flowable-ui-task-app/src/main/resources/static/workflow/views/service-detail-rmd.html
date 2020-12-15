@@ -1,0 +1,38 @@
+<div class="main-content1" ng-controller="RmdServeController" ng-model="id"  style="height: 320px">
+
+        <div class="content clearfix" auto-height offset="6" ng-if="selectedRMDServe != null && selectedRMDServe != undefined">
+
+                <div class="pull-right">
+
+                </div>
+                <!-- 推荐服务的内容 -->
+                <div class="split-left">
+                    <div class="section pack" style="margin:0 0 0 0; padding: 10px 0 0 0">
+                        <h6 translate="SERVICE.FIELD.NAME" style="margin: 0 0 0 0"></h6>
+                        <div style="font-size: 14px">
+                            <div user-picture="task.assignee"></div>
+                            <div style="cursor: pointer;" ng-if="userTask.value"
+                                 id="{{userTask.value}}"
+                                 ng-model="draggedElement"
+                                 data-drag="true"
+                                 jqyoui-draggable="{onStart:'startDragCallback', onDrag:'dragCallback'}"
+                                 data-jqyoui-options="{revert: 'invalid', helper: 'clone', opacity : 0.5}">
+
+                                {{selectedRMDServe.serviceName | translate}}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="section pack" style="margin:0 0 0 0; padding: 10px 0 0 0">
+                        <h6 translate="SERVICE.FIELD.ACCESS-POINT" style="margin: 0 0 0 0"></h6>
+                        <div style="font-size: 14px">
+                            <div user-picture="task.assignee"></div>
+                            {{selectedRMDServe.accessPoint}}
+                        </div>
+                    </div>
+
+                </div>
+         </div>
+
+
+</div>

@@ -1,0 +1,35 @@
+<div class="modal" ng-controller="inputFormController" ng-cloak="">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>请填写该API类服务输入参数表单</h2>
+            </div>
+            <div class="modal-body"  style="margin:0 auto;text-align:center">
+                <table ng-if="inputForm_input" class="inputTable">
+
+                    <tr style="text-align: center">
+                        <td class="inputTableth">参数名称</td>
+                        <td class="inputTableth">参数类型</td>
+                        <td class="inputTableth">参数取值</td>
+                    </tr>
+
+                    <tr style="text-align: center">
+                        <td class="inputTableth">{{inputForm.inputParamsName}}</td>
+                        <td class="inputTableth">{{inputForm.inputParamsType}}</td>
+                        <td class="inputTableth"><input style="border:0px;text-align: center;outline: none;"type="text" ng-model="inputForm.inputParamsValue" placeholder="请输入取值"></td>
+                    </tr>
+
+                </table>
+                <table ng-if="!inputForm_input">
+                    <tr>
+                        <td><label>无需输入任何参数</label></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button ng-click="cancel()" class="btn btn-primary" translate >ACTION.CANCEL</button>
+                <button ng-click="send()" ng-disabled="model.feedback.length === 0" class="btn btn-primary" translate >保存</button>
+            </div>
+        </div>
+    </div>
+</div>

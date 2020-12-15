@@ -1,0 +1,5 @@
+<div ng-controller="DragonNodetypeComboboxCtrl">
+    <select ng-init="item = property.value" ng-model="item" ng-change="comboValueChanged(item)"
+            ng-options="item.sn as item.name for item in nodeTypes">
+    </select>
+</div>
